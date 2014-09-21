@@ -419,19 +419,19 @@ mrb_gc_free_gv(mrb_state *mrb)
 }
 
 void
-mrb_gc_mark_iv(mrb_state *mrb, struct RObject *obj)
+mrb_gc_mark_iv(mrb_state *mrb, struct MRObject *obj)
 {
   mark_tbl(mrb, obj->iv);
 }
 
 size_t
-mrb_gc_mark_iv_size(mrb_state *mrb, struct RObject *obj)
+mrb_gc_mark_iv_size(mrb_state *mrb, struct MRObject *obj)
 {
   return iv_size(mrb, obj->iv);
 }
 
 void
-mrb_gc_free_iv(mrb_state *mrb, struct RObject *obj)
+mrb_gc_free_iv(mrb_state *mrb, struct MRObject *obj)
 {
   if (obj->iv) {
     iv_free(mrb, obj->iv);
@@ -467,7 +467,7 @@ obj_iv_p(mrb_value obj)
 }
 
 MRB_API mrb_value
-mrb_obj_iv_get(mrb_state *mrb, struct RObject *obj, mrb_sym sym)
+mrb_obj_iv_get(mrb_state *mrb, struct MRObject *obj, mrb_sym sym)
 {
   mrb_value v;
 
@@ -486,7 +486,7 @@ mrb_iv_get(mrb_state *mrb, mrb_value obj, mrb_sym sym)
 }
 
 MRB_API void
-mrb_obj_iv_set(mrb_state *mrb, struct RObject *obj, mrb_sym sym, mrb_value v)
+mrb_obj_iv_set(mrb_state *mrb, struct MRObject *obj, mrb_sym sym, mrb_value v)
 {
   iv_tbl *t = obj->iv;
 
@@ -498,7 +498,7 @@ mrb_obj_iv_set(mrb_state *mrb, struct RObject *obj, mrb_sym sym, mrb_value v)
 }
 
 MRB_API void
-mrb_obj_iv_ifnone(mrb_state *mrb, struct RObject *obj, mrb_sym sym, mrb_value v)
+mrb_obj_iv_ifnone(mrb_state *mrb, struct MRObject *obj, mrb_sym sym, mrb_value v)
 {
   iv_tbl *t = obj->iv;
 
@@ -524,7 +524,7 @@ mrb_iv_set(mrb_state *mrb, mrb_value obj, mrb_sym sym, mrb_value v)
 }
 
 MRB_API mrb_bool
-mrb_obj_iv_defined(mrb_state *mrb, struct RObject *obj, mrb_sym sym)
+mrb_obj_iv_defined(mrb_state *mrb, struct MRObject *obj, mrb_sym sym)
 {
   iv_tbl *t;
 
@@ -571,8 +571,8 @@ mrb_iv_check(mrb_state *mrb, mrb_sym iv_name)
 MRB_API void
 mrb_iv_copy(mrb_state *mrb, mrb_value dest, mrb_value src)
 {
-  struct RObject *d = mrb_obj_ptr(dest);
-  struct RObject *s = mrb_obj_ptr(src);
+  struct MRObject *d = mrb_obj_ptr(dest);
+  struct MRObject *s = mrb_obj_ptr(src);
 
   if (d->iv) {
     iv_free(mrb, d->iv);
@@ -615,7 +615,7 @@ inspect_i(mrb_state *mrb, mrb_sym sym, mrb_value v, void *p)
 }
 
 mrb_value
-mrb_obj_iv_inspect(mrb_state *mrb, struct RObject *obj)
+mrb_obj_iv_inspect(mrb_state *mrb, struct MRObject *obj)
 {
   iv_tbl *t = obj->iv;
   size_t len = iv_size(mrb, t);
@@ -940,7 +940,7 @@ mrb_vm_const_set(mrb_state *mrb, mrb_sym sym, mrb_value v)
   struct RClass *c = mrb->c->ci->proc->target_class;
 
   if (!c) c = mrb->c->ci->target_class;
-  mrb_obj_iv_set(mrb, (struct RObject*)c, sym, v);
+  mrb_obj_iv_set(mrb, (struct MRObject*)c, sym, v);
 }
 
 MRB_API void
@@ -953,7 +953,7 @@ mrb_const_remove(mrb_state *mrb, mrb_value mod, mrb_sym sym)
 MRB_API void
 mrb_define_const(mrb_state *mrb, struct RClass *mod, const char *name, mrb_value v)
 {
-  mrb_obj_iv_set(mrb, (struct RObject*)mod, mrb_intern_cstr(mrb, name), v);
+  mrb_obj_iv_set(mrb, (struct MRObject*)mod, mrb_intern_cstr(mrb, name), v);
 }
 
 MRB_API void
@@ -1145,7 +1145,7 @@ mrb_class_sym(mrb_state *mrb, struct RClass *c, struct RClass *outer)
 {
   mrb_value name;
 
-  name = mrb_obj_iv_get(mrb, (struct RObject*)c, mrb_intern_lit(mrb, "__classid__"));
+  name = mrb_obj_iv_get(mrb, (struct MRObject*)c, mrb_intern_lit(mrb, "__classid__"));
   if (mrb_nil_p(name)) {
 
     if (!outer) return 0;

@@ -117,10 +117,10 @@ typedef struct mrb_state {
   struct mrb_context *c;
   struct mrb_context *root_c;
 
-  struct RObject *exc;                    /* exception */
+  struct MRObject *exc;                    /* exception */
   struct iv_tbl *globals;                 /* global variable table */
 
-  struct RObject *top_self;
+  struct MRObject *top_self;
   struct RClass *object_class;            /* Object class */
   struct RClass *class_class;
   struct RClass *module_class;
@@ -174,7 +174,7 @@ typedef struct mrb_state {
 
   struct RClass *eException_class;
   struct RClass *eStandardError_class;
-  struct RObject *nomem_err;              /* pre-allocated NoMemoryError */
+  struct MRObject *nomem_err;              /* pre-allocated NoMemoryError */
 
   void *ud; /* auxiliary data */
 
@@ -204,7 +204,7 @@ MRB_API void mrb_include_module(mrb_state*, struct RClass*, struct RClass*);
 
 MRB_API void mrb_define_method(mrb_state*, struct RClass*, const char*, mrb_func_t, mrb_aspec);
 MRB_API void mrb_define_class_method(mrb_state *, struct RClass *, const char *, mrb_func_t, mrb_aspec);
-MRB_API void mrb_define_singleton_method(mrb_state*, struct RObject*, const char*, mrb_func_t, mrb_aspec);
+MRB_API void mrb_define_singleton_method(mrb_state*, struct MRObject*, const char*, mrb_func_t, mrb_aspec);
 MRB_API void mrb_define_module_function(mrb_state*, struct RClass*, const char*, mrb_func_t, mrb_aspec);
 MRB_API void mrb_define_const(mrb_state*, struct RClass*, const char *name, mrb_value);
 MRB_API void mrb_undef_method(mrb_state*, struct RClass*, const char*);

@@ -264,7 +264,7 @@ ecall(mrb_state *mrb, int i)
   struct RProc *p;
   mrb_callinfo *ci;
   mrb_value *self = mrb->c->stack;
-  struct RObject *exc;
+  struct MRObject *exc;
 
   p = mrb->c->ensure[i];
   if (!p) return;
@@ -2179,7 +2179,7 @@ RETRY_TRY_BLOCK:
           if (p->target_class->tt == MRB_TT_SCLASS) {
             mrb_value klass;
             klass = mrb_obj_iv_get(mrb,
-                                   (struct RObject *)p->target_class,
+                                   (struct MRObject *)p->target_class,
                                    mrb_intern_lit(mrb, "__attached__"));
             p->target_class = mrb_class_ptr(klass);
           }

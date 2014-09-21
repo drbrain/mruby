@@ -130,7 +130,7 @@ output_backtrace(mrb_state *mrb, mrb_int ciidx, mrb_code *pc0, output_stream_fun
 }
 
 static void
-exc_output_backtrace(mrb_state *mrb, struct RObject *exc, output_stream_func func, void *stream)
+exc_output_backtrace(mrb_state *mrb, struct MRObject *exc, output_stream_func func, void *stream)
 {
   output_backtrace(mrb, mrb_fixnum(mrb_obj_iv_get(mrb, exc, mrb_intern_lit(mrb, "ciidx"))),
                    (mrb_code*)mrb_cptr(mrb_obj_iv_get(mrb, exc, mrb_intern_lit(mrb, "lastpc"))),

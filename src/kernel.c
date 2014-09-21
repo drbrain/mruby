@@ -241,7 +241,7 @@ mrb_singleton_class_clone(mrb_state *mrb, mrb_value obj)
     clone->super = klass->super;
     if (klass->iv) {
       mrb_iv_copy(mrb, mrb_obj_value(clone), mrb_obj_value(klass));
-      mrb_obj_iv_set(mrb, (struct RObject*)clone, mrb_intern_lit(mrb, "__attached__"), obj);
+      mrb_obj_iv_set(mrb, (struct MRObject*)clone, mrb_intern_lit(mrb, "__attached__"), obj);
     }
     if (klass->mt) {
       clone->mt = kh_copy(mt, mrb, klass->mt);
@@ -314,13 +314,13 @@ init_copy(mrb_state *mrb, mrb_value dest, mrb_value obj)
 MRB_API mrb_value
 mrb_obj_clone(mrb_state *mrb, mrb_value self)
 {
-  struct RObject *p;
+  struct MRObject *p;
   mrb_value clone;
 
   if (mrb_immediate_p(self)) {
     mrb_raisef(mrb, E_TYPE_ERROR, "can't clone %S", self);
   }
-  p = (struct RObject*)mrb_obj_alloc(mrb, mrb_type(self), mrb_obj_class(mrb, self));
+  p = (struct MRObject*)mrb_obj_alloc(mrb, mrb_type(self), mrb_obj_class(mrb, self));
   p->c = mrb_singleton_class_clone(mrb, self);
   clone = mrb_obj_value(p);
   init_copy(mrb, clone, self);

@@ -101,7 +101,7 @@ typedef struct {
   union {
     struct free_obj free;
     struct MRBasic basic;
-    struct RObject object;
+    struct MRObject object;
     struct RClass klass;
     struct RString string;
     struct RArray array;
@@ -515,7 +515,7 @@ gc_mark_children(mrb_state *mrb, struct MRBasic *obj)
   case MRB_TT_OBJECT:
   case MRB_TT_DATA:
   case MRB_TT_EXCEPTION:
-    mrb_gc_mark_iv(mrb, (struct RObject*)obj);
+    mrb_gc_mark_iv(mrb, (struct MRObject*)obj);
     break;
 
   case MRB_TT_PROC:
@@ -562,7 +562,7 @@ gc_mark_children(mrb_state *mrb, struct MRBasic *obj)
     break;
 
   case MRB_TT_HASH:
-    mrb_gc_mark_iv(mrb, (struct RObject*)obj);
+    mrb_gc_mark_iv(mrb, (struct MRObject*)obj);
     mrb_gc_mark_hash(mrb, (struct RHash*)obj);
     break;
 
@@ -615,14 +615,14 @@ obj_free(mrb_state *mrb, struct MRBasic *obj)
 
   case MRB_TT_OBJECT:
   case MRB_TT_EXCEPTION:
-    mrb_gc_free_iv(mrb, (struct RObject*)obj);
+    mrb_gc_free_iv(mrb, (struct MRObject*)obj);
     break;
 
   case MRB_TT_CLASS:
   case MRB_TT_MODULE:
   case MRB_TT_SCLASS:
     mrb_gc_free_mt(mrb, (struct RClass*)obj);
-    mrb_gc_free_iv(mrb, (struct RObject*)obj);
+    mrb_gc_free_iv(mrb, (struct MRObject*)obj);
     break;
 
   case MRB_TT_ENV:
@@ -653,7 +653,7 @@ obj_free(mrb_state *mrb, struct MRBasic *obj)
     break;
 
   case MRB_TT_HASH:
-    mrb_gc_free_iv(mrb, (struct RObject*)obj);
+    mrb_gc_free_iv(mrb, (struct MRObject*)obj);
     mrb_gc_free_hash(mrb, (struct RHash*)obj);
     break;
 
@@ -681,7 +681,7 @@ obj_free(mrb_state *mrb, struct MRBasic *obj)
       if (d->type && d->type->dfree) {
         d->type->dfree(mrb, d->data);
       }
-      mrb_gc_free_iv(mrb, (struct RObject*)obj);
+      mrb_gc_free_iv(mrb, (struct MRObject*)obj);
     }
     break;
 
@@ -742,7 +742,7 @@ gc_gray_mark(mrb_state *mrb, struct MRBasic *obj)
     {
       struct RClass *c = (struct RClass*)obj;
 
-      children += mrb_gc_mark_iv_size(mrb, (struct RObject*)obj);
+      children += mrb_gc_mark_iv_size(mrb, (struct MRObject*)obj);
       children += mrb_gc_mark_mt_size(mrb, c);
       children++;
     }
@@ -751,7 +751,7 @@ gc_gray_mark(mrb_state *mrb, struct MRBasic *obj)
   case MRB_TT_OBJECT:
   case MRB_TT_DATA:
   case MRB_TT_EXCEPTION:
-    children += mrb_gc_mark_iv_size(mrb, (struct RObject*)obj);
+    children += mrb_gc_mark_iv_size(mrb, (struct MRObject*)obj);
     break;
 
   case MRB_TT_ENV:
@@ -791,7 +791,7 @@ gc_gray_mark(mrb_state *mrb, struct MRBasic *obj)
     break;
 
   case MRB_TT_HASH:
-    children += mrb_gc_mark_iv_size(mrb, (struct RObject*)obj);
+    children += mrb_gc_mark_iv_size(mrb, (struct MRObject*)obj);
     children += mrb_gc_mark_hash_size(mrb, (struct RHash*)obj);
     break;
 

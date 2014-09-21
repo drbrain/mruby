@@ -92,7 +92,7 @@ static mrb_value
 exc_to_s(mrb_state *mrb, mrb_value exc)
 {
   mrb_value mesg = mrb_attr_get(mrb, exc, mrb_intern_lit(mrb, "mesg"));
-  struct RObject *p;
+  struct MRObject *p;
 
   if (!mrb_string_p(mesg)) {
     return mrb_str_new_cstr(mrb, mrb_obj_classname(mrb, exc));
@@ -176,7 +176,7 @@ exc_inspect(mrb_state *mrb, mrb_value exc)
 
 
 static void
-exc_debug_info(mrb_state *mrb, struct RObject *exc)
+exc_debug_info(mrb_state *mrb, struct MRObject *exc)
 {
   mrb_callinfo *ci = mrb->c->ci;
   mrb_code *pc = ci->pc;

@@ -53,7 +53,7 @@ mrb_gc_free_mt(mrb_state *mrb, struct RClass *c)
 static void
 name_class(mrb_state *mrb, struct RClass *c, mrb_sym name)
 {
-  mrb_obj_iv_set(mrb, (struct RObject*)c,
+  mrb_obj_iv_set(mrb, (struct MRObject*)c,
                  mrb_intern_lit(mrb, "__classid__"), mrb_symbol_value(name));
 }
 
@@ -61,9 +61,9 @@ static void
 setup_class(mrb_state *mrb, struct RClass *outer, struct RClass *c, mrb_sym id)
 {
   name_class(mrb, c, id);
-  mrb_obj_iv_set(mrb, (struct RObject*)outer, id, mrb_obj_value(c));
+  mrb_obj_iv_set(mrb, (struct MRObject*)outer, id, mrb_obj_value(c));
   if (outer != mrb->object_class) {
-    mrb_obj_iv_set(mrb, (struct RObject*)c, mrb_intern_lit(mrb, "__outer__"),
+    mrb_obj_iv_set(mrb, (struct MRObject*)c, mrb_intern_lit(mrb, "__outer__"),
                    mrb_obj_value(outer));
   }
 }
@@ -101,7 +101,7 @@ prepare_singleton_class(mrb_state *mrb, struct MRBasic *o)
   o->c = sc;
   mrb_field_write_barrier(mrb, (struct MRBasic*)o, (struct MRBasic*)sc);
   mrb_field_write_barrier(mrb, (struct MRBasic*)sc, (struct MRBasic*)o);
-  mrb_obj_iv_set(mrb, (struct RObject*)sc, mrb_intern_lit(mrb, "__attached__"), mrb_obj_value(o));
+  mrb_obj_iv_set(mrb, (struct MRObject*)sc, mrb_intern_lit(mrb, "__attached__"), mrb_obj_value(o));
 }
 
 static struct RClass *
@@ -127,7 +127,7 @@ mrb_class_outer_module(mrb_state *mrb, struct RClass *c)
 {
   mrb_value outer;
 
-  outer = mrb_obj_iv_get(mrb, (struct RObject*)c, mrb_intern_lit(mrb, "__outer__"));
+  outer = mrb_obj_iv_get(mrb, (struct MRObject*)c, mrb_intern_lit(mrb, "__outer__"));
   if (mrb_nil_p(outer)) return NULL;
   return mrb_class_ptr(outer);
 }
@@ -989,14 +989,14 @@ mrb_singleton_class(mrb_state *mrb, mrb_value v)
   obj = mrb_basic_ptr(v);
   prepare_singleton_class(mrb, obj);
   if (mrb->c && mrb->c->ci && mrb->c->ci->target_class) {
-    mrb_obj_iv_set(mrb, (struct RObject*)obj->c, mrb_intern_lit(mrb, "__outer__"),
+    mrb_obj_iv_set(mrb, (struct MRObject*)obj->c, mrb_intern_lit(mrb, "__outer__"),
                    mrb_obj_value(mrb->c->ci->target_class));
   }
   return mrb_obj_value(obj->c);
 }
 
 MRB_API void
-mrb_define_singleton_method(mrb_state *mrb, struct RObject *o, const char *name, mrb_func_t func, mrb_aspec aspec)
+mrb_define_singleton_method(mrb_state *mrb, struct MRObject *o, const char *name, mrb_func_t func, mrb_aspec aspec)
 {
   prepare_singleton_class(mrb, (struct MRBasic*)o);
   mrb_define_method_id(mrb, o->c, mrb_intern_cstr(mrb, name), func, aspec);
@@ -1005,7 +1005,7 @@ mrb_define_singleton_method(mrb_state *mrb, struct RObject *o, const char *name,
 MRB_API void
 mrb_define_class_method(mrb_state *mrb, struct RClass *c, const char *name, mrb_func_t func, mrb_aspec aspec)
 {
-  mrb_define_singleton_method(mrb, (struct RObject*)c, name, func, aspec);
+  mrb_define_singleton_method(mrb, (struct MRObject*)c, name, func, aspec);
 }
 
 MRB_API void
@@ -1145,14 +1145,14 @@ static mrb_value
 mrb_instance_alloc(mrb_state *mrb, mrb_value cv)
 {
   struct RClass *c = mrb_class_ptr(cv);
-  struct RObject *o;
+  struct MRObject *o;
   enum mrb_vtype ttype = MRB_INSTANCE_TT(c);
 
   if (c->tt == MRB_TT_SCLASS)
     mrb_raise(mrb, E_TYPE_ERROR, "can't create instance of singleton class");
 
   if (ttype == 0) ttype = MRB_TT_OBJECT;
-  o = (struct RObject*)mrb_obj_alloc(mrb, ttype, c);
+  o = (struct MRObject*)mrb_obj_alloc(mrb, ttype, c);
   return mrb_obj_value(o);
 }
 
@@ -1349,7 +1349,7 @@ mrb_class_path(mrb_state *mrb, struct RClass *c)
   const char *name;
   mrb_sym classpath = mrb_intern_lit(mrb, "__classpath__");
 
-  path = mrb_obj_iv_get(mrb, (struct RObject*)c, classpath);
+  path = mrb_obj_iv_get(mrb, (struct MRObject*)c, classpath);
   if (mrb_nil_p(path)) {
     struct RClass *outer = mrb_class_outer_module(mrb, c);
     mrb_sym sym = mrb_class_sym(mrb, c, outer);
@@ -1377,7 +1377,7 @@ mrb_class_path(mrb_state *mrb, struct RClass *c)
       name = mrb_sym2name_len(mrb, sym, &len);
       path = mrb_str_new(mrb, name, len);
     }
-    mrb_obj_iv_set(mrb, (struct RObject*)c, classpath, path);
+    mrb_obj_iv_set(mrb, (struct MRObject*)c, classpath, path);
   }
   return path;
 }
