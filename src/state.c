@@ -39,7 +39,7 @@ mrb_open_core(mrb_allocf f, void *ud)
   mrb->atexit_stack_len = 0;
 
 #ifndef MRB_GC_FIXED_ARENA
-  mrb->arena = (struct RBasic**)mrb_malloc(mrb, sizeof(struct RBasic*)*MRB_GC_ARENA_SIZE);
+  mrb->arena = (struct MRBasic**)mrb_malloc(mrb, sizeof(struct MRBasic*)*MRB_GC_ARENA_SIZE);
   mrb->arena_capa = MRB_GC_ARENA_SIZE;
 #endif
 

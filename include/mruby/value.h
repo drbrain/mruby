@@ -167,7 +167,7 @@ static inline mrb_value
 mrb_obj_value(void *p)
 {
   mrb_value v;
-  SET_OBJ_VALUE(v, (struct RBasic*)p);
+  SET_OBJ_VALUE(v, (struct MRBasic*)p);
   return v;
 }
 

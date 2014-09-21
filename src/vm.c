@@ -252,7 +252,7 @@ cipop(mrb_state *mrb)
       stack_copy(p, e->stack, len);
     }
     e->stack = p;
-    mrb_write_barrier(mrb, (struct RBasic *)e);
+    mrb_write_barrier(mrb, (struct MRBasic *)e);
   }
 
   c->ci--;
@@ -934,7 +934,7 @@ RETRY_TRY_BLOCK:
         mrb_value *regs_a = regs + GETARG_A(i);
         int idx = GETARG_B(i);
         e->stack[idx] = *regs_a;
-        mrb_write_barrier(mrb, (struct RBasic*)e);
+        mrb_write_barrier(mrb, (struct MRBasic*)e);
       }
       NEXT;
     }

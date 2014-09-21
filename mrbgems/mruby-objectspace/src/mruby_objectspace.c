@@ -10,7 +10,7 @@ struct os_count_struct {
 };
 
 static void
-os_count_object_type(mrb_state *mrb, struct RBasic *obj, void *data)
+os_count_object_type(mrb_state *mrb, struct MRBasic *obj, void *data)
 {
   struct os_count_struct *obj_count;
   obj_count = (struct os_count_struct*)data;
@@ -110,7 +110,7 @@ struct os_each_object_data {
 };
 
 static void
-os_each_object_cb(mrb_state *mrb, struct RBasic *obj, void *ud)
+os_each_object_cb(mrb_state *mrb, struct MRBasic *obj, void *ud)
 {
   struct os_each_object_data *d = (struct os_each_object_data*)ud;
 

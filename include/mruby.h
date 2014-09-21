@@ -142,17 +142,17 @@ typedef struct mrb_state {
   struct heap_page *free_heaps;
   size_t live; /* count of live objects */
 #ifdef MRB_GC_FIXED_ARENA
-  struct RBasic *arena[MRB_GC_ARENA_SIZE]; /* GC protection array */
+  struct MRBasic *arena[MRB_GC_ARENA_SIZE]; /* GC protection array */
 #else
-  struct RBasic **arena;                   /* GC protection array */
+  struct MRBasic **arena;                   /* GC protection array */
   int arena_capa;
 #endif
   int arena_idx;
 
   enum gc_state gc_state; /* state of gc */
   int current_white_part; /* make white object by white_part */
-  struct RBasic *gray_list; /* list of gray objects to be traversed incrementally */
-  struct RBasic *atomic_gray_list; /* list of objects to be traversed atomically */
+  struct MRBasic *gray_list; /* list of gray objects to be traversed incrementally */
+  struct MRBasic *atomic_gray_list; /* list of objects to be traversed atomically */
   size_t gc_live_after_mark;
   size_t gc_threshold;
   int gc_interval_ratio;
@@ -287,7 +287,7 @@ MRB_API void *mrb_calloc(mrb_state*, size_t, size_t); /* ditto */
 MRB_API void *mrb_realloc(mrb_state*, void*, size_t); /* ditto */
 MRB_API void *mrb_realloc_simple(mrb_state*, void*, size_t); /* return NULL if no memory available */
 MRB_API void *mrb_malloc_simple(mrb_state*, size_t);  /* return NULL if no memory available */
-MRB_API struct RBasic *mrb_obj_alloc(mrb_state*, enum mrb_vtype, struct RClass*);
+MRB_API struct MRBasic *mrb_obj_alloc(mrb_state*, enum mrb_vtype, struct RClass*);
 MRB_API void mrb_free(mrb_state*, void*);
 
 MRB_API mrb_value mrb_str_new(mrb_state *mrb, const char *p, size_t len);
@@ -324,15 +324,15 @@ MRB_API void mrb_full_gc(mrb_state*);
 MRB_API void mrb_incremental_gc(mrb_state *);
 MRB_API int mrb_gc_arena_save(mrb_state*);
 MRB_API void mrb_gc_arena_restore(mrb_state*,int);
-MRB_API void mrb_gc_mark(mrb_state*,struct RBasic*);
+MRB_API void mrb_gc_mark(mrb_state*,struct MRBasic*);
 #define mrb_gc_mark_value(mrb,val) do {\
   if (!mrb_immediate_p(val)) mrb_gc_mark((mrb), mrb_basic_ptr(val)); \
 } while (0)
-MRB_API void mrb_field_write_barrier(mrb_state *, struct RBasic*, struct RBasic*);
+MRB_API void mrb_field_write_barrier(mrb_state *, struct MRBasic*, struct MRBasic*);
 #define mrb_field_write_barrier_value(mrb, obj, val) do{\
   if (!mrb_immediate_p(val)) mrb_field_write_barrier((mrb), (obj), mrb_basic_ptr(val)); \
 } while (0)
-MRB_API void mrb_write_barrier(mrb_state *, struct RBasic*);
+MRB_API void mrb_write_barrier(mrb_state *, struct MRBasic*);
 
 MRB_API mrb_value mrb_check_convert_type(mrb_state *mrb, mrb_value val, enum mrb_vtype type, const char *tname, const char *method);
 MRB_API mrb_value mrb_any_to_s(mrb_state *mrb, mrb_value obj);

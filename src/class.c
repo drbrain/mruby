@@ -29,7 +29,7 @@ mrb_gc_mark_mt(mrb_state *mrb, struct RClass *c)
     if (kh_exist(h, k)) {
       struct RProc *m = kh_value(h, k);
       if (m) {
-        mrb_gc_mark(mrb, (struct RBasic*)m);
+        mrb_gc_mark(mrb, (struct MRBasic*)m);
       }
     }
   }
@@ -68,10 +68,10 @@ setup_class(mrb_state *mrb, struct RClass *outer, struct RClass *c, mrb_sym id)
   }
 }
 
-#define make_metaclass(mrb, c) prepare_singleton_class((mrb), (struct RBasic*)(c))
+#define make_metaclass(mrb, c) prepare_singleton_class((mrb), (struct MRBasic*)(c))
 
 static void
-prepare_singleton_class(mrb_state *mrb, struct RBasic *o)
+prepare_singleton_class(mrb_state *mrb, struct MRBasic *o)
 {
   struct RClass *sc, *c;
 
@@ -99,8 +99,8 @@ prepare_singleton_class(mrb_state *mrb, struct RBasic *o)
     sc->super = o->c;
   }
   o->c = sc;
-  mrb_field_write_barrier(mrb, (struct RBasic*)o, (struct RBasic*)sc);
-  mrb_field_write_barrier(mrb, (struct RBasic*)sc, (struct RBasic*)o);
+  mrb_field_write_barrier(mrb, (struct MRBasic*)o, (struct MRBasic*)sc);
+  mrb_field_write_barrier(mrb, (struct MRBasic*)sc, (struct MRBasic*)o);
   mrb_obj_iv_set(mrb, (struct RObject*)sc, mrb_intern_lit(mrb, "__attached__"), mrb_obj_value(o));
 }
 
@@ -325,7 +325,7 @@ mrb_define_method_raw(mrb_state *mrb, struct RClass *c, mrb_sym mid, struct RPro
   k = kh_put(mt, mrb, h, mid);
   kh_value(h, k) = p;
   if (p) {
-    mrb_field_write_barrier(mrb, (struct RBasic *)c, (struct RBasic *)p);
+    mrb_field_write_barrier(mrb, (struct MRBasic *)c, (struct MRBasic *)p);
   }
 }
 
@@ -359,7 +359,7 @@ mrb_define_method_vm(mrb_state *mrb, struct RClass *c, mrb_sym name, mrb_value b
   p = mrb_proc_ptr(body);
   kh_value(h, k) = p;
   if (p) {
-    mrb_field_write_barrier(mrb, (struct RBasic *)c, (struct RBasic *)p);
+    mrb_field_write_barrier(mrb, (struct MRBasic *)c, (struct MRBasic *)p);
   }
 }
 
@@ -736,7 +736,7 @@ boot_defclass(mrb_state *mrb, struct RClass *super)
   c = (struct RClass*)mrb_obj_alloc(mrb, MRB_TT_CLASS, mrb->class_class);
   if (super) {
     c->super = super;
-    mrb_field_write_barrier(mrb, (struct RBasic*)c, (struct RBasic*)super);
+    mrb_field_write_barrier(mrb, (struct MRBasic*)c, (struct MRBasic*)super);
   }
   else {
     c->super = mrb->object_class;
@@ -781,7 +781,7 @@ mrb_include_module(mrb_state *mrb, struct RClass *c, struct RClass *m)
     ic->iv = m->iv;
     ic->super = ins_pos->super;
     ins_pos->super = ic;
-    mrb_field_write_barrier(mrb, (struct RBasic*)ins_pos, (struct RBasic*)ic);
+    mrb_field_write_barrier(mrb, (struct MRBasic*)ins_pos, (struct MRBasic*)ic);
     ins_pos = ic;
   skip:
     m = m->super;
@@ -967,7 +967,7 @@ mrb_mod_dummy_visibility(mrb_state *mrb, mrb_value mod)
 MRB_API mrb_value
 mrb_singleton_class(mrb_state *mrb, mrb_value v)
 {
-  struct RBasic *obj;
+  struct MRBasic *obj;
 
   switch (mrb_type(v)) {
   case MRB_TT_FALSE:
@@ -998,7 +998,7 @@ mrb_singleton_class(mrb_state *mrb, mrb_value v)
 MRB_API void
 mrb_define_singleton_method(mrb_state *mrb, struct RObject *o, const char *name, mrb_func_t func, mrb_aspec aspec)
 {
-  prepare_singleton_class(mrb, (struct RBasic*)o);
+  prepare_singleton_class(mrb, (struct MRBasic*)o);
   mrb_define_method_id(mrb, o->c, mrb_intern_cstr(mrb, name), func, aspec);
 }
 
@@ -2002,7 +2002,7 @@ mrb_mod_module_function(mrb_state *mrb, mrb_value mod)
     rclass = mrb_class_ptr(mod);
     method_rproc = mrb_method_search(mrb, rclass, mid);
 
-    prepare_singleton_class(mrb, (struct RBasic*)rclass);
+    prepare_singleton_class(mrb, (struct MRBasic*)rclass);
     ai = mrb_gc_arena_save(mrb);
     mrb_define_method_raw(mrb, rclass->c, mid, method_rproc);
     mrb_gc_arena_restore(mrb, ai);

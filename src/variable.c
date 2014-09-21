@@ -493,7 +493,7 @@ mrb_obj_iv_set(mrb_state *mrb, struct RObject *obj, mrb_sym sym, mrb_value v)
   if (!t) {
     t = obj->iv = iv_new(mrb);
   }
-  mrb_write_barrier(mrb, (struct RBasic*)obj);
+  mrb_write_barrier(mrb, (struct MRBasic*)obj);
   iv_put(mrb, t, sym, v);
 }
 
@@ -508,7 +508,7 @@ mrb_obj_iv_ifnone(mrb_state *mrb, struct RObject *obj, mrb_sym sym, mrb_value v)
   else if (iv_get(mrb, t, sym, &v)) {
     return;
   }
-  mrb_write_barrier(mrb, (struct RBasic*)obj);
+  mrb_write_barrier(mrb, (struct MRBasic*)obj);
   iv_put(mrb, t, sym, v);
 }
 
@@ -579,7 +579,7 @@ mrb_iv_copy(mrb_state *mrb, mrb_value dest, mrb_value src)
     d->iv = 0;
   }
   if (s->iv) {
-    mrb_write_barrier(mrb, (struct RBasic*)d);
+    mrb_write_barrier(mrb, (struct MRBasic*)d);
     d->iv = iv_copy(mrb, s->iv);
   }
 }
@@ -793,7 +793,7 @@ mrb_mod_cv_set(mrb_state *mrb, struct RClass *c, mrb_sym sym, mrb_value v)
       iv_tbl *t = c->iv;
 
       if (iv_get(mrb, t, sym, NULL)) {
-        mrb_write_barrier(mrb, (struct RBasic*)c);
+        mrb_write_barrier(mrb, (struct MRBasic*)c);
         iv_put(mrb, t, sym, v);
         return;
       }
@@ -805,7 +805,7 @@ mrb_mod_cv_set(mrb_state *mrb, struct RClass *c, mrb_sym sym, mrb_value v)
     cls->iv = iv_new(mrb);
   }
 
-  mrb_write_barrier(mrb, (struct RBasic*)cls);
+  mrb_write_barrier(mrb, (struct MRBasic*)cls);
   iv_put(mrb, cls->iv, sym, v);
 }
 

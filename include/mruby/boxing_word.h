@@ -46,7 +46,7 @@ typedef union mrb_value {
       unsigned int sym_flag : MRB_SPECIAL_SHIFT;
       int sym : (sizeof(mrb_sym) * CHAR_BIT);
     };
-    struct RBasic *bp;
+    struct MRBasic *bp;
     struct RFloat *fp;
     struct RCptr *vp;
   } value;

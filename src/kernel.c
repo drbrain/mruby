@@ -350,7 +350,7 @@ mrb_obj_clone(mrb_state *mrb, mrb_value self)
 MRB_API mrb_value
 mrb_obj_dup(mrb_state *mrb, mrb_value obj)
 {
-  struct RBasic *p;
+  struct MRBasic *p;
   mrb_value dup;
 
   if (mrb_immediate_p(obj)) {

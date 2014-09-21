@@ -153,7 +153,7 @@ ary_modify(mrb_state *mrb, struct RArray *a)
 MRB_API void
 mrb_ary_modify(mrb_state *mrb, struct RArray* a)
 {
-  mrb_write_barrier(mrb, (struct RBasic*)a);
+  mrb_write_barrier(mrb, (struct MRBasic*)a);
   ary_modify(mrb, a);
 }
 
@@ -265,7 +265,7 @@ ary_concat(mrb_state *mrb, struct RArray *a, mrb_value *ptr, mrb_int blen)
   ary_modify(mrb, a);
   if (a->aux.capa < len) ary_expand_capa(mrb, a, len);
   array_copy(a->ptr+a->len, ptr, blen);
-  mrb_write_barrier(mrb, (struct RBasic*)a);
+  mrb_write_barrier(mrb, (struct MRBasic*)a);
   a->len = len;
 }
 
@@ -314,7 +314,7 @@ ary_replace(mrb_state *mrb, struct RArray *a, mrb_value *argv, mrb_int len)
   if (a->aux.capa < len)
     ary_expand_capa(mrb, a, len);
   array_copy(a->ptr, argv, len);
-  mrb_write_barrier(mrb, (struct RBasic*)a);
+  mrb_write_barrier(mrb, (struct MRBasic*)a);
   a->len = len;
 }
 
@@ -416,7 +416,7 @@ mrb_ary_push(mrb_state *mrb, mrb_value ary, mrb_value elem)
   if (a->len == a->aux.capa)
     ary_expand_capa(mrb, a, a->len + 1);
   a->ptr[a->len++] = elem;
-  mrb_field_write_barrier_value(mrb, (struct RBasic*)a, elem);
+  mrb_field_write_barrier_value(mrb, (struct MRBasic*)a, elem);
 }
 
 static mrb_value
@@ -499,7 +499,7 @@ mrb_ary_unshift(mrb_state *mrb, mrb_value self, mrb_value item)
     a->ptr[0] = item;
   }
   a->len++;
-  mrb_field_write_barrier_value(mrb, (struct RBasic*)a, item);
+  mrb_field_write_barrier_value(mrb, (struct MRBasic*)a, item);
 
   return self;
 }
@@ -527,7 +527,7 @@ mrb_ary_unshift_m(mrb_state *mrb, mrb_value self)
   array_copy(a->ptr, vals, len);
   a->len += len;
   while (len--) {
-    mrb_field_write_barrier_value(mrb, (struct RBasic*)a, vals[len]);
+    mrb_field_write_barrier_value(mrb, (struct MRBasic*)a, vals[len]);
   }
 
   return self;
@@ -566,7 +566,7 @@ mrb_ary_set(mrb_state *mrb, mrb_value ary, mrb_int n, mrb_value val)
   }
 
   a->ptr[n] = val;
-  mrb_field_write_barrier_value(mrb, (struct RBasic*)a, val);
+  mrb_field_write_barrier_value(mrb, (struct MRBasic*)a, val);
 }
 
 MRB_API mrb_value
@@ -618,7 +618,7 @@ mrb_ary_splice(mrb_state *mrb, mrb_value ary, mrb_int head, mrb_int len, mrb_val
 
   for (i = 0; i < argc; i++) {
     *(a->ptr + head + i) = *(argv + i);
-    mrb_field_write_barrier_value(mrb, (struct RBasic*)a, argv[i]);
+    mrb_field_write_barrier_value(mrb, (struct MRBasic*)a, argv[i]);
   }
 
   a->len = size;

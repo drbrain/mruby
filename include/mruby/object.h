@@ -12,7 +12,7 @@
   uint32_t color:3;\
   uint32_t flags:21;\
   struct RClass *c;\
-  struct RBasic *gcnext
+  struct MRBasic *gcnext
 
 /* white: 011, black: 100, gray: 000 */
 #define MRB_GC_GRAY 0
@@ -33,10 +33,10 @@
 #define flip_white_part(s) ((s)->current_white_part = other_white_part(s))
 #define other_white_part(s) ((s)->current_white_part ^ MRB_GC_WHITES)
 
-struct RBasic {
+struct MRBasic {
   MRB_OBJECT_HEADER;
 };
-#define mrb_basic_ptr(v) ((struct RBasic*)(mrb_ptr(v)))
+#define mrb_basic_ptr(v) ((struct MRBasic*)(mrb_ptr(v)))
 
 struct RObject {
   MRB_OBJECT_HEADER;
