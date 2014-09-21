@@ -16,8 +16,8 @@ printstr(mrb_state *mrb, mrb_value obj)
   int len;
 
   if (mrb_string_p(obj)) {
-    s = RSTRING_PTR(obj);
-    len = RSTRING_LEN(obj);
+    s = MRSTRING_PTR(obj);
+    len = MRSTRING_LEN(obj);
     fwrite(s, len, 1, stdout);
   }
 #endif
@@ -42,7 +42,7 @@ mrb_print_error(mrb_state *mrb)
   mrb_print_backtrace(mrb);
   s = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
   if (mrb_string_p(s)) {
-    fwrite(RSTRING_PTR(s), RSTRING_LEN(s), 1, stderr);
+    fwrite(MRSTRING_PTR(s), MRSTRING_LEN(s), 1, stderr);
     putc('\n', stderr);
   }
 #endif

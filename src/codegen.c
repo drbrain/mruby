@@ -329,7 +329,7 @@ genop_peep(codegen_scope *s, mrb_code i, int val)
       if (c0 == OP_STRING) {
         mrb_value v = s->irep->pool[GETARG_Bx(i0)];
 
-        if (mrb_string_p(v) && RSTRING_LEN(v) == 0) {
+        if (mrb_string_p(v) && MRSTRING_LEN(v) == 0) {
           s->pc--;
           return 0;
         }
@@ -425,8 +425,8 @@ new_lit(codegen_scope *s, mrb_value val)
       pv = &s->irep->pool[i];
 
       if (mrb_type(*pv) != MRB_TT_STRING) continue;
-      if ((len = RSTRING_LEN(*pv)) != RSTRING_LEN(val)) continue;
-      if (memcmp(RSTRING_PTR(*pv), RSTRING_PTR(val), len) == 0)
+      if ((len = MRSTRING_LEN(*pv)) != MRSTRING_LEN(val)) continue;
+      if (memcmp(MRSTRING_PTR(*pv), MRSTRING_PTR(val), len) == 0)
         return i;
     }
     break;
@@ -2754,7 +2754,7 @@ codedump(mrb_state *mrb, mrb_irep *irep)
       {
         mrb_value v = irep->pool[GETARG_Bx(c)];
         mrb_value s = mrb_inspect(mrb, v);
-        printf("OP_LOADL\tR%d\tL(%d)\t; %s", GETARG_A(c), GETARG_Bx(c), RSTRING_PTR(s));
+        printf("OP_LOADL\tR%d\tL(%d)\t; %s", GETARG_A(c), GETARG_Bx(c), MRSTRING_PTR(s));
       }
       print_lv(mrb, irep, c, RA);
       break;
@@ -3015,8 +3015,8 @@ codedump(mrb_state *mrb, mrb_irep *irep)
     case OP_STRING:
       {
         mrb_value v = irep->pool[GETARG_Bx(c)];
-        mrb_value s = mrb_str_dump(mrb, mrb_str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
-        printf("OP_STRING\tR%d\tL(%d)\t; %s", GETARG_A(c), GETARG_Bx(c), RSTRING_PTR(s));
+        mrb_value s = mrb_str_dump(mrb, mrb_str_new(mrb, MRSTRING_PTR(v), MRSTRING_LEN(v)));
+        printf("OP_STRING\tR%d\tL(%d)\t; %s", GETARG_A(c), GETARG_Bx(c), MRSTRING_PTR(s));
       }
       print_lv(mrb, irep, c, RA);
       break;
@@ -3058,8 +3058,8 @@ codedump(mrb_state *mrb, mrb_irep *irep)
     case OP_ERR:
       {
         mrb_value v = irep->pool[GETARG_Bx(c)];
-        mrb_value s = mrb_str_dump(mrb, mrb_str_new(mrb, RSTRING_PTR(v), RSTRING_LEN(v)));
-        printf("OP_ERR\t%s\n", RSTRING_PTR(s));
+        mrb_value s = mrb_str_dump(mrb, mrb_str_new(mrb, MRSTRING_PTR(v), MRSTRING_LEN(v)));
+        printf("OP_ERR\t%s\n", MRSTRING_PTR(s));
       }
       break;
     case OP_EPUSH:

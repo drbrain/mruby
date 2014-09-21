@@ -50,10 +50,10 @@ get_backtrace_i(mrb_state *mrb, void *stream, int level, const char *format, ...
   va_end(ap);
 
   va_start(ap, format);
-  vsnprintf(RSTRING_PTR(str), RSTRING_LEN(str), format, ap);
+  vsnprintf(MRSTRING_PTR(str), MRSTRING_LEN(str), format, ap);
   va_end(ap);
 
-  mrb_str_resize(mrb, str, RSTRING_LEN(str) - 1);
+  mrb_str_resize(mrb, str, MRSTRING_LEN(str) - 1);
   mrb_ary_push(mrb, ary, str);
   mrb_gc_arena_restore(mrb, ai);
 }

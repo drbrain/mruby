@@ -99,7 +99,7 @@ mrb_intern_cstr(mrb_state *mrb, const char *name)
 MRB_API mrb_sym
 mrb_intern_str(mrb_state *mrb, mrb_value str)
 {
-  return mrb_intern(mrb, RSTRING_PTR(str), RSTRING_LEN(str));
+  return mrb_intern(mrb, MRSTRING_PTR(str), MRSTRING_LEN(str));
 }
 
 MRB_API mrb_value
@@ -129,7 +129,7 @@ mrb_check_intern_cstr(mrb_state *mrb, const char *name)
 MRB_API mrb_value
 mrb_check_intern_str(mrb_state *mrb, mrb_value str)
 {
-  return mrb_check_intern(mrb, RSTRING_PTR(str), RSTRING_LEN(str));
+  return mrb_check_intern(mrb, MRSTRING_PTR(str), MRSTRING_LEN(str));
 }
 
 /* lenp must be a pointer to a size_t variable */
@@ -403,13 +403,13 @@ sym_inspect(mrb_state *mrb, mrb_value sym)
 
   name = mrb_sym2name_len(mrb, id, &len);
   str = mrb_str_new(mrb, 0, len+1);
-  sp = RSTRING_PTR(str);
-  RSTRING_PTR(str)[0] = ':';
+  sp = MRSTRING_PTR(str);
+  MRSTRING_PTR(str)[0] = ':';
   memcpy(sp+1, name, len);
   mrb_assert_int_fit(mrb_int, len, size_t, SIZE_MAX);
   if (!symname_p(name) || strlen(name) != (size_t)len) {
     str = mrb_str_dump(mrb, str);
-    sp = RSTRING_PTR(str);
+    sp = MRSTRING_PTR(str);
     sp[0] = ':';
     sp[1] = '"';
   }
@@ -438,7 +438,7 @@ mrb_sym2name(mrb_state *mrb, mrb_sym sym)
   }
   else {
     mrb_value str = mrb_str_dump(mrb, mrb_str_new_static(mrb, name, len));
-    return RSTRING_PTR(str);
+    return MRSTRING_PTR(str);
   }
 }
 

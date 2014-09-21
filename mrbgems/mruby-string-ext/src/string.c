@@ -12,11 +12,11 @@ mrb_str_getbyte(mrb_state *mrb, mrb_value str)
   mrb_get_args(mrb, "i", &pos);
 
   if (pos < 0)
-    pos += RSTRING_LEN(str);
-  if (pos < 0 ||  RSTRING_LEN(str) <= pos)
+    pos += MRSTRING_LEN(str);
+  if (pos < 0 ||  MRSTRING_LEN(str) <= pos)
     return mrb_nil_value();
 
-  return mrb_fixnum_value((unsigned char)RSTRING_PTR(str)[pos]);
+  return mrb_fixnum_value((unsigned char)MRSTRING_PTR(str)[pos]);
 }
 
 /*
@@ -35,8 +35,8 @@ mrb_str_swapcase_bang(mrb_state *mrb, mrb_value str)
   struct MRString *s = mrb_str_ptr(str);
 
   mrb_str_modify(mrb, s);
-  p = RSTRING_PTR(str);
-  pend = p + RSTRING_LEN(str);
+  p = MRSTRING_PTR(str);
+  pend = p + MRSTRING_LEN(str);
   while (p < pend) {
     if (ISUPPER(*p)) {
       *p = TOLOWER(*p);
@@ -123,10 +123,10 @@ mrb_str_start_with(mrb_state *mrb, mrb_value self)
     int ai = mrb_gc_arena_save(mrb);
     sub = mrb_string_type(mrb, argv[i]);
     mrb_gc_arena_restore(mrb, ai);
-    len_l = RSTRING_LEN(self);
-    len_r = RSTRING_LEN(sub);
+    len_l = MRSTRING_LEN(self);
+    len_r = MRSTRING_LEN(sub);
     if (len_l >= len_r) {
-      if (memcmp(RSTRING_PTR(self), RSTRING_PTR(sub), len_r) == 0) {
+      if (memcmp(MRSTRING_PTR(self), MRSTRING_PTR(sub), len_r) == 0) {
         return mrb_true_value();
       }
     }
@@ -152,11 +152,11 @@ mrb_str_end_with(mrb_state *mrb, mrb_value self)
     int ai = mrb_gc_arena_save(mrb);
     sub = mrb_string_type(mrb, argv[i]);
     mrb_gc_arena_restore(mrb, ai);
-    len_l = RSTRING_LEN(self);
-    len_r = RSTRING_LEN(sub);
+    len_l = MRSTRING_LEN(self);
+    len_r = MRSTRING_LEN(sub);
     if (len_l >= len_r) {
-      if (memcmp(RSTRING_PTR(self) + (len_l - len_r),
-                 RSTRING_PTR(sub),
+      if (memcmp(MRSTRING_PTR(self) + (len_l - len_r),
+                 MRSTRING_PTR(sub),
                  len_r) == 0) {
         return mrb_true_value();
       }
@@ -209,8 +209,8 @@ mrb_str_lines(mrb_state *mrb, mrb_value self)
   int ai;
   mrb_int len;
   mrb_value arg;
-  char *p = RSTRING_PTR(self), *t;
-  char *e = p + RSTRING_LEN(self);
+  char *p = MRSTRING_PTR(self), *t;
+  char *e = p + MRSTRING_LEN(self);
 
   mrb_get_args(mrb, "&", &blk);
 
@@ -257,12 +257,12 @@ mrb_str_succ_bang(mrb_state *mrb, mrb_value self)
   struct MRString *s = mrb_str_ptr(self);
   size_t l;
 
-  if (RSTRING_LEN(self) == 0)
+  if (MRSTRING_LEN(self) == 0)
     return self;
 
   mrb_str_modify(mrb, s);
-  l = RSTRING_LEN(self);
-  b = p = (unsigned char*) RSTRING_PTR(self);
+  l = MRSTRING_LEN(self);
+  b = p = (unsigned char*) MRSTRING_PTR(self);
   t = e = p + l;
   *(e--) = 0;
 
@@ -315,9 +315,9 @@ mrb_str_succ_bang(mrb_state *mrb, mrb_value self)
     e--;
   }
   result = mrb_str_cat(mrb, result, (char*) b, t - b);
-  l = RSTRING_LEN(result);
+  l = MRSTRING_LEN(result);
   mrb_str_resize(mrb, self, l);
-  memcpy(RSTRING_PTR(self), RSTRING_PTR(result), l);
+  memcpy(MRSTRING_PTR(self), MRSTRING_PTR(result), l);
   return self;
 }
 

@@ -12,7 +12,7 @@ static void
 p(mrb_state *mrb, mrb_value obj)
 {
   obj = mrb_funcall(mrb, obj, "inspect", 0);
-  fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stdout);
+  fwrite(MRSTRING_PTR(obj), MRSTRING_LEN(obj), 1, stdout);
   putc('\n', stdout);
 }
 #else

@@ -13,7 +13,7 @@ extern "C" {
 
 extern const char mrb_digitmap[];
 
-#define RSTRING_EMBED_LEN_MAX ((mrb_int)(sizeof(void*) * 3 - 1))
+#define MRSTRING_EMBED_LEN_MAX ((mrb_int)(sizeof(void*) * 3 - 1))
 
 struct MRString {
   MRB_OBJECT_HEADER;
@@ -26,7 +26,7 @@ struct MRString {
       } aux;
       char *ptr;
     } heap;
-    char ary[RSTRING_EMBED_LEN_MAX + 1];
+    char ary[MRSTRING_EMBED_LEN_MAX + 1];
   } as;
 };
 
@@ -49,7 +49,7 @@ struct MRString {
   (mrb_int)(((s)->flags & MRB_STR_EMBED_LEN_MASK) >> MRB_STR_EMBED_LEN_SHIFT)
 #define RSTR_PTR(s) ((RSTR_EMBED_P(s)) ? (s)->as.ary : (s)->as.heap.ptr)
 #define RSTR_LEN(s) ((RSTR_EMBED_P(s)) ? RSTR_EMBED_LEN(s) : (s)->as.heap.len)
-#define RSTR_CAPA(s) (RSTR_EMBED_P(s) ? RSTRING_EMBED_LEN_MAX : (s)->as.heap.aux.capa)
+#define RSTR_CAPA(s) (RSTR_EMBED_P(s) ? MRSTRING_EMBED_LEN_MAX : (s)->as.heap.aux.capa)
 
 #define RSTR_SHARED_P(s) ((s)->flags & MRB_STR_SHARED)
 #define RSTR_SET_SHARED_FLAG(s) ((s)->flags |= MRB_STR_SHARED)
@@ -60,12 +60,12 @@ struct MRString {
 #define RSTR_UNSET_NOFREE_FLAG(s) ((s)->flags &= ~MRB_STR_NOFREE)
 
 #define mrb_str_ptr(s)       ((struct MRString*)(mrb_ptr(s)))
-#define RSTRING(s)           mrb_str_ptr(s)
-#define RSTRING_PTR(s)       RSTR_PTR(RSTRING(s))
-#define RSTRING_EMBED_LEN(s) RSTR_ENBED_LEN(RSTRING(s))
-#define RSTRING_LEN(s)       RSTR_LEN(RSTRING(s))  
-#define RSTRING_CAPA(s)      RSTR_CAPA(RSTRING(s))
-#define RSTRING_END(s)       (RSTRING_PTR(s) + RSTRING_LEN(s))
+#define MRSTRING(s)           mrb_str_ptr(s)
+#define MRSTRING_PTR(s)       RSTR_PTR(MRSTRING(s))
+#define MRSTRING_EMBED_LEN(s) RSTR_ENBED_LEN(MRSTRING(s))
+#define MRSTRING_LEN(s)       RSTR_LEN(MRSTRING(s))  
+#define MRSTRING_CAPA(s)      RSTR_CAPA(MRSTRING(s))
+#define MRSTRING_END(s)       (MRSTRING_PTR(s) + MRSTRING_LEN(s))
 mrb_int mrb_str_strlen(mrb_state*, struct MRString*);
 
 #define MRB_STR_SHARED    1

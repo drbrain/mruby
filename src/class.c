@@ -549,8 +549,8 @@ mrb_get_args(mrb_state *mrb, const char *format, ...)
         pl = va_arg(ap, mrb_int*);
         if (i < argc) {
           ss = to_str(mrb, *sp++);
-          *ps = RSTRING_PTR(ss);
-          *pl = RSTRING_LEN(ss);
+          *ps = MRSTRING_PTR(ss);
+          *pl = MRSTRING_LEN(ss);
           i++;
         }
       }
@@ -1047,7 +1047,7 @@ mrb_method_search(mrb_state *mrb, struct RClass* c, mrb_sym mid)
   m = mrb_method_search_vm(mrb, &c, mid);
   if (!m) {
     mrb_value inspect = mrb_funcall(mrb, mrb_obj_value(c), "inspect", 0);
-    if (RSTRING_LEN(inspect) > 64) {
+    if (MRSTRING_LEN(inspect) > 64) {
       inspect = mrb_any_to_s(mrb, mrb_obj_value(c));
     }
     mrb_name_error(mrb, mid, "undefined method '%S' for class %S",
@@ -1079,7 +1079,7 @@ mrb_mod_attr_reader(mrb_state *mrb, mrb_value mod)
 
     method = to_sym(mrb, argv[i]);
     name = mrb_sym2str(mrb, method);
-    str = mrb_str_buf_new(mrb, RSTRING_LEN(name)+1);
+    str = mrb_str_buf_new(mrb, MRSTRING_LEN(name)+1);
     mrb_str_cat_lit(mrb, str, "@");
     mrb_str_cat_str(mrb, str, name);
     sym = mrb_intern_str(mrb, str);
@@ -1121,7 +1121,7 @@ mrb_mod_attr_writer(mrb_state *mrb, mrb_value mod)
 
     /* prepare iv name (@name) */
     name = mrb_sym2str(mrb, method);
-    str = mrb_str_buf_new(mrb, RSTRING_LEN(name)+1);
+    str = mrb_str_buf_new(mrb, MRSTRING_LEN(name)+1);
     mrb_str_cat_lit(mrb, str, "@");
     mrb_str_cat_str(mrb, str, name);
     sym = mrb_intern_str(mrb, str);
@@ -1129,7 +1129,7 @@ mrb_mod_attr_writer(mrb_state *mrb, mrb_value mod)
     attr = mrb_symbol_value(sym);
 
     /* prepare method name (name=) */
-    str = mrb_str_buf_new(mrb, RSTRING_LEN(str));
+    str = mrb_str_buf_new(mrb, MRSTRING_LEN(str));
     mrb_str_cat_str(mrb, str, name);
     mrb_str_cat_lit(mrb, str, "=");
     method = mrb_intern_str(mrb, str);
@@ -1299,7 +1299,7 @@ mrb_bob_missing(mrb_state *mrb, mrb_value mod)
   }
   else if (mrb_respond_to(mrb, mod, inspect) && mrb->c->ci - mrb->c->cibase < 64) {
     repr = mrb_funcall_argv(mrb, mod, inspect, 0, 0);
-    if (RSTRING_LEN(repr) > 64) {
+    if (MRSTRING_LEN(repr) > 64) {
       repr = mrb_any_to_s(mrb, mod);
     }
   }
@@ -1402,7 +1402,7 @@ mrb_class_name(mrb_state *mrb, struct RClass* c)
     mrb_str_concat(mrb, path, mrb_ptr_to_str(mrb, c));
     mrb_str_cat_lit(mrb, path, ">");
   }
-  return RSTRING_PTR(path);
+  return MRSTRING_PTR(path);
 }
 
 MRB_API const char*
@@ -1643,8 +1643,8 @@ mod_define_method(mrb_state *mrb, mrb_value self)
 static void
 check_cv_name_str(mrb_state *mrb, mrb_value str)
 {
-  const char *s = RSTRING_PTR(str);
-  mrb_int len = RSTRING_LEN(str);
+  const char *s = MRSTRING_PTR(str);
+  mrb_int len = MRSTRING_LEN(str);
 
   if (len < 3 || !(s[0] == '@' && s[1] == '@')) {
     mrb_name_error(mrb, mrb_intern_str(mrb, str), "`%S' is not allowed as a class variable name", str);
@@ -1867,7 +1867,7 @@ mrb_mod_remove_method(mrb_state *mrb, mrb_value mod)
 static void
 check_const_name_str(mrb_state *mrb, mrb_value str)
 {
-  if (RSTRING_LEN(str) < 1 || !ISUPPER(*RSTRING_PTR(str))) {
+  if (MRSTRING_LEN(str) < 1 || !ISUPPER(*MRSTRING_PTR(str))) {
     mrb_name_error(mrb, mrb_intern_str(mrb, str), "wrong constant name %S", str);
   }
 }

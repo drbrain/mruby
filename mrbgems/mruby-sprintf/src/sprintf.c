@@ -125,7 +125,7 @@ mrb_fix2binstr(mrb_state *mrb, mrb_value x, int base)
   }\
   mrb_str_resize(mrb, result, bsiz);\
 /*  ENC_CODERANGE_SET(result, cr);*/\
-  buf = RSTRING_PTR(result);\
+  buf = MRSTRING_PTR(result);\
 } while (0)
 
 #define PUSH(s, l) do { \
@@ -522,12 +522,12 @@ mrb_str_format(mrb_state *mrb, int argc, const mrb_value *argv, mrb_value fmt)
   ++argc;
   --argv;
   fmt = mrb_str_to_str(mrb, fmt);
-  p = RSTRING_PTR(fmt);
-  end = p + RSTRING_LEN(fmt);
+  p = MRSTRING_PTR(fmt);
+  end = p + MRSTRING_LEN(fmt);
   blen = 0;
   bsiz = 120;
   result = mrb_str_buf_new(mrb, bsiz);
-  buf = RSTRING_PTR(result);
+  buf = MRSTRING_PTR(result);
   memset(buf, 0, bsiz);
 
   for (; p < end; p++) {
@@ -679,8 +679,8 @@ retry:
         else {
           mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid character");
         }
-        c = RSTRING_PTR(tmp);
-        n = RSTRING_LEN(tmp);
+        c = MRSTRING_PTR(tmp);
+        n = MRSTRING_LEN(tmp);
         if (!(flags & FWIDTH)) {
           CHECK(n);
           memcpy(buf+blen, c, n);
@@ -711,23 +711,23 @@ retry:
 
         if (*p == 'p') arg = mrb_inspect(mrb, arg);
         str = mrb_obj_as_string(mrb, arg);
-        len = RSTRING_LEN(str);
-        if (RSTRING(result)->flags & MRB_STR_EMBED) {
+        len = MRSTRING_LEN(str);
+        if (MRSTRING(result)->flags & MRB_STR_EMBED) {
           mrb_int tmp_n = len;
-          RSTRING(result)->flags &= ~MRB_STR_EMBED_LEN_MASK;
-          RSTRING(result)->flags |= tmp_n << MRB_STR_EMBED_LEN_SHIFT;
+          MRSTRING(result)->flags &= ~MRB_STR_EMBED_LEN_MASK;
+          MRSTRING(result)->flags |= tmp_n << MRB_STR_EMBED_LEN_SHIFT;
         } else {
-          RSTRING(result)->as.heap.len = blen;
+          MRSTRING(result)->as.heap.len = blen;
         }
         if (flags&(FPREC|FWIDTH)) {
-          slen = RSTRING_LEN(str);
+          slen = MRSTRING_LEN(str);
           if (slen < 0) {
             mrb_raise(mrb, E_ARGUMENT_ERROR, "invalid mbstring sequence");
           }
           if ((flags&FPREC) && (prec < slen)) {
-            char *p = RSTRING_PTR(str) + prec;
+            char *p = MRSTRING_PTR(str) + prec;
             slen = prec;
-            len = p - RSTRING_PTR(str);
+            len = p - MRSTRING_PTR(str);
           }
           /* need to adjust multi-byte string pos */
           if ((flags&FWIDTH) && (width > slen)) {
@@ -739,7 +739,7 @@ retry:
               }
             }
             CHECK(len);
-            memcpy(&buf[blen], RSTRING_PTR(str), len);
+            memcpy(&buf[blen], MRSTRING_PTR(str), len);
             blen += len;
             if (flags&FMINUS) {
               CHECK(width);
@@ -750,7 +750,7 @@ retry:
             break;
           }
         }
-        PUSH(RSTRING_PTR(str), len);
+        PUSH(MRSTRING_PTR(str), len);
       }
       break;
 

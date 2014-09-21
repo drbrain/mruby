@@ -26,8 +26,8 @@ mrb_hash_ht_hash_func(mrb_state *mrb, mrb_value key)
 
   switch (t) {
   case MRB_TT_STRING:
-    p = RSTRING_PTR(key);
-    len = RSTRING_LEN(key);
+    p = MRSTRING_PTR(key);
+    len = MRSTRING_LEN(key);
     h = 0;
     for (i=0; i<len; i++) {
       h = (h << 5) - h + *p++;

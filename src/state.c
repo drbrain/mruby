@@ -148,7 +148,7 @@ mrb_irep_free(mrb_state *mrb, mrb_irep *irep)
     mrb_free(mrb, irep->iseq);
   for (i=0; i<irep->plen; i++) {
     if (mrb_type(irep->pool[i]) == MRB_TT_STRING) {
-      mrb_gc_free_str(mrb, RSTRING(irep->pool[i]));
+      mrb_gc_free_str(mrb, MRSTRING(irep->pool[i]));
       mrb_free(mrb, mrb_obj_ptr(irep->pool[i]));
     }
 #ifdef MRB_WORD_BOXING
@@ -199,7 +199,7 @@ mrb_str_pool(mrb_state *mrb, mrb_value str)
       len = s->as.heap.len;
     }
 
-    if (len < RSTRING_EMBED_LEN_MAX) {
+    if (len < MRSTRING_EMBED_LEN_MAX) {
       RSTR_SET_EMBED_FLAG(ns);
       RSTR_SET_EMBED_LEN(ns, len);
       if (ptr) {

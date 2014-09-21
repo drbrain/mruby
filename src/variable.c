@@ -591,7 +591,7 @@ inspect_i(mrb_state *mrb, mrb_sym sym, mrb_value v, void *p)
   const char *s;
   mrb_int len;
   mrb_value ins;
-  char *sp = RSTRING_PTR(str);
+  char *sp = MRSTRING_PTR(str);
 
   /* need not to show internal data */
   if (sp[0] == '-') { /* first element */

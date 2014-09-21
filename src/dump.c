@@ -99,7 +99,7 @@ get_pool_block_size(mrb_state *mrb, mrb_irep *irep)
     case MRB_TT_FIXNUM:
       str = mrb_fixnum_to_str(mrb, irep->pool[pool_no], 10);
       {
-        mrb_int len = RSTRING_LEN(str);
+        mrb_int len = MRSTRING_LEN(str);
         mrb_assert_int_fit(mrb_int, len, size_t, SIZE_MAX);
         size += (size_t)len;
       }
@@ -116,7 +116,7 @@ get_pool_block_size(mrb_state *mrb, mrb_irep *irep)
 
     case MRB_TT_STRING:
       {
-        mrb_int len = RSTRING_LEN(irep->pool[pool_no]);
+        mrb_int len = MRSTRING_LEN(irep->pool[pool_no]);
         mrb_assert_int_fit(mrb_int, len, size_t, SIZE_MAX);
         size += (size_t)len;
       }
@@ -150,11 +150,11 @@ write_pool_block(mrb_state *mrb, mrb_irep *irep, uint8_t *buf)
     case MRB_TT_FIXNUM:
       cur += uint8_to_bin(IREP_TT_FIXNUM, cur); /* data type */
       str = mrb_fixnum_to_str(mrb, irep->pool[pool_no], 10);
-      char_ptr = RSTRING_PTR(str);
+      char_ptr = MRSTRING_PTR(str);
       {
         mrb_int tlen;
 
-        tlen = RSTRING_LEN(str);
+        tlen = MRSTRING_LEN(str);
         mrb_assert_int_fit(mrb_int, tlen, uint16_t, UINT16_MAX);
         len = (uint16_t)tlen;
       }
@@ -173,11 +173,11 @@ write_pool_block(mrb_state *mrb, mrb_irep *irep, uint8_t *buf)
 
     case MRB_TT_STRING:
       cur += uint8_to_bin(IREP_TT_STRING, cur); /* data type */
-      char_ptr = RSTRING_PTR(irep->pool[pool_no]);
+      char_ptr = MRSTRING_PTR(irep->pool[pool_no]);
       {
         mrb_int tlen;
 
-        tlen = RSTRING_LEN(irep->pool[pool_no]);
+        tlen = MRSTRING_LEN(irep->pool[pool_no]);
         mrb_assert_int_fit(mrb_int, tlen, uint16_t, UINT16_MAX);
         len = (uint16_t)tlen;
       }

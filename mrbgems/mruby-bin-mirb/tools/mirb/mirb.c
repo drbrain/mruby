@@ -83,7 +83,7 @@ p(mrb_state *mrb, mrb_value obj, int prompt)
       obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
     }
   }
-  fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stdout);
+  fwrite(MRSTRING_PTR(obj), MRSTRING_LEN(obj), 1, stdout);
   putc('\n', stdout);
 }
 

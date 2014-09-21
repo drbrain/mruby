@@ -143,7 +143,7 @@ exc_inspect(mrb_state *mrb, mrb_value exc)
   append_mesg = !mrb_nil_p(mesg);
   if (append_mesg) {
     mesg = mrb_obj_as_string(mrb, mesg);
-    append_mesg = RSTRING_LEN(mesg) > 0;
+    append_mesg = MRSTRING_LEN(mesg) > 0;
   }
 
   if (!mrb_nil_p(file) && !mrb_nil_p(line)) {
@@ -316,7 +316,7 @@ mrb_warn(mrb_state *mrb, const char *fmt, ...)
   va_start(ap, fmt);
   str = mrb_vformat(mrb, fmt, ap);
   fputs("warning: ", stderr);
-  fwrite(RSTRING_PTR(str), RSTRING_LEN(str), 1, stderr);
+  fwrite(MRSTRING_PTR(str), MRSTRING_LEN(str), 1, stderr);
   va_end(ap);
 #endif
 }
@@ -331,7 +331,7 @@ mrb_bug(mrb_state *mrb, const char *fmt, ...)
   va_start(ap, fmt);
   str = mrb_vformat(mrb, fmt, ap);
   fputs("bug: ", stderr);
-  fwrite(RSTRING_PTR(str), RSTRING_LEN(str), 1, stderr);
+  fwrite(MRSTRING_PTR(str), MRSTRING_LEN(str), 1, stderr);
   va_end(ap);
 #endif
   exit(EXIT_FAILURE);
