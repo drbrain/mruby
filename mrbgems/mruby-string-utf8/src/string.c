@@ -225,7 +225,7 @@ static mrb_int
 str_rindex(mrb_state *mrb, mrb_value str, mrb_value sub, mrb_int pos)
 {
   char *s, *sbeg, *t;
-  struct RString *ps = mrb_str_ptr(str);
+  struct MRString *ps = mrb_str_ptr(str);
   mrb_int len = RSTRING_LEN(sub);
 
   /* substring longer than string */

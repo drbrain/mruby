@@ -26,11 +26,11 @@ typedef struct mrb_shared_string {
   mrb_int len;
 } mrb_shared_string;
 
-static mrb_value str_replace(mrb_state *mrb, struct RString *s1, struct RString *s2);
+static mrb_value str_replace(mrb_state *mrb, struct MRString *s1, struct MRString *s2);
 static mrb_value mrb_str_subseq(mrb_state *mrb, mrb_value str, mrb_int beg, mrb_int len);
 
 MRB_API mrb_int
-mrb_str_strlen(mrb_state *mrb, struct RString *s)
+mrb_str_strlen(mrb_state *mrb, struct MRString *s)
 {
   mrb_int i, max = RSTR_LEN(s);
   char *p = RSTR_PTR(s);
@@ -45,7 +45,7 @@ mrb_str_strlen(mrb_state *mrb, struct RString *s)
 }
 
 static inline void
-resize_capa(mrb_state *mrb, struct RString *s, mrb_int capacity)
+resize_capa(mrb_state *mrb, struct MRString *s, mrb_int capacity)
 {
   if (RSTR_EMBED_P(s)) {
     if (RSTRING_EMBED_LEN_MAX < capacity) {
@@ -77,7 +77,7 @@ str_decref(mrb_state *mrb, mrb_shared_string *shared)
 }
 
 MRB_API void
-mrb_str_modify(mrb_state *mrb, struct RString *s)
+mrb_str_modify(mrb_state *mrb, struct MRString *s)
 {
   if (RSTR_SHARED_P(s)) {
     mrb_shared_string *shared = s->as.heap.aux.shared;
@@ -124,7 +124,7 @@ MRB_API mrb_value
 mrb_str_resize(mrb_state *mrb, mrb_value str, mrb_int len)
 {
   mrb_int slen;
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
 
   mrb_str_modify(mrb, s);
   slen = RSTR_LEN(s);
@@ -138,12 +138,12 @@ mrb_str_resize(mrb_state *mrb, mrb_value str, mrb_int len)
   return str;
 }
 
-#define mrb_obj_alloc_string(mrb) ((struct RString*)mrb_obj_alloc((mrb), MRB_TT_STRING, (mrb)->string_class))
+#define mrb_obj_alloc_string(mrb) ((struct MRString*)mrb_obj_alloc((mrb), MRB_TT_STRING, (mrb)->string_class))
 
-static struct RString*
+static struct MRString*
 str_new(mrb_state *mrb, const char *p, size_t len)
 {
-  struct RString *s;
+  struct MRString *s;
 
   s = mrb_obj_alloc_string(mrb);
   if (len < RSTRING_EMBED_LEN_MAX) {
@@ -168,7 +168,7 @@ str_new(mrb_state *mrb, const char *p, size_t len)
 }
 
 static inline void
-str_with_class(mrb_state *mrb, struct RString *s, mrb_value obj)
+str_with_class(mrb_state *mrb, struct MRString *s, mrb_value obj)
 {
   s->c = mrb_str_ptr(obj)->c;
 }
@@ -176,7 +176,7 @@ str_with_class(mrb_state *mrb, struct RString *s, mrb_value obj)
 static mrb_value
 mrb_str_new_empty(mrb_state *mrb, mrb_value str)
 {
-  struct RString *s = str_new(mrb, 0, 0);
+  struct MRString *s = str_new(mrb, 0, 0);
 
   str_with_class(mrb, s, str);
   return mrb_obj_value(s);
@@ -189,7 +189,7 @@ mrb_str_new_empty(mrb_state *mrb, mrb_value str)
 MRB_API mrb_value
 mrb_str_buf_new(mrb_state *mrb, size_t capa)
 {
-  struct RString *s;
+  struct MRString *s;
 
   s = mrb_obj_alloc_string(mrb);
 
@@ -208,7 +208,7 @@ mrb_str_buf_new(mrb_state *mrb, size_t capa)
 }
 
 static void
-str_buf_cat(mrb_state *mrb, struct RString *s, const char *ptr, size_t len)
+str_buf_cat(mrb_state *mrb, struct MRString *s, const char *ptr, size_t len)
 {
   size_t capa;
   size_t total;
@@ -264,7 +264,7 @@ mrb_str_new(mrb_state *mrb, const char *p, size_t len)
 MRB_API mrb_value
 mrb_str_new_cstr(mrb_state *mrb, const char *p)
 {
-  struct RString *s;
+  struct MRString *s;
   size_t len;
 
   if (p) {
@@ -282,7 +282,7 @@ mrb_str_new_cstr(mrb_state *mrb, const char *p)
 MRB_API mrb_value
 mrb_str_new_static(mrb_state *mrb, const char *p, size_t len)
 {
-  struct RString *s;
+  struct MRString *s;
 
   if (len >= MRB_INT_MAX) {
     mrb_raise(mrb, E_ARGUMENT_ERROR, "string size too big");
@@ -296,7 +296,7 @@ mrb_str_new_static(mrb_state *mrb, const char *p, size_t len)
 }
 
 void
-mrb_gc_free_str(mrb_state *mrb, struct RString *str)
+mrb_gc_free_str(mrb_state *mrb, struct MRString *str)
 {
   if (RSTR_EMBED_P(str))
     /* no code */;
@@ -309,7 +309,7 @@ mrb_gc_free_str(mrb_state *mrb, struct RString *str)
 MRB_API char*
 mrb_str_to_cstr(mrb_state *mrb, mrb_value str0)
 {
-  struct RString *s;
+  struct MRString *s;
 
   if (!mrb_string_p(str0)) {
     mrb_raise(mrb, E_TYPE_ERROR, "expected String");
@@ -323,7 +323,7 @@ mrb_str_to_cstr(mrb_state *mrb, mrb_value str0)
 }
 
 static void
-str_make_shared(mrb_state *mrb, struct RString *s)
+str_make_shared(mrb_state *mrb, struct MRString *s)
 {
   if (!RSTR_SHARED_P(s)) {
     mrb_shared_string *shared = (mrb_shared_string *)mrb_malloc(mrb, sizeof(mrb_shared_string));
@@ -369,7 +369,7 @@ str_make_shared(mrb_state *mrb, struct RString *s)
 MRB_API void
 mrb_str_concat(mrb_state *mrb, mrb_value self, mrb_value other)
 {
-  struct RString *s1 = mrb_str_ptr(self), *s2;
+  struct MRString *s1 = mrb_str_ptr(self), *s2;
   mrb_int len;
 
   mrb_str_modify(mrb, s1);
@@ -396,9 +396,9 @@ mrb_str_concat(mrb_state *mrb, mrb_value self, mrb_value other)
 MRB_API mrb_value
 mrb_str_plus(mrb_state *mrb, mrb_value a, mrb_value b)
 {
-  struct RString *s = mrb_str_ptr(a);
-  struct RString *s2 = mrb_str_ptr(b);
-  struct RString *t;
+  struct MRString *s = mrb_str_ptr(a);
+  struct MRString *s2 = mrb_str_ptr(b);
+  struct MRString *t;
 
   t = str_new(mrb, 0, RSTR_LEN(s) + RSTR_LEN(s2));
   memcpy(RSTR_PTR(t), RSTR_PTR(s), RSTR_LEN(s));
@@ -435,7 +435,7 @@ mrb_str_plus_m(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_str_size(mrb_state *mrb, mrb_value self)
 {
-  struct RString *s = mrb_str_ptr(self);
+  struct MRString *s = mrb_str_ptr(self);
   return mrb_fixnum_value(RSTR_LEN(s));
 }
 
@@ -453,7 +453,7 @@ static mrb_value
 mrb_str_times(mrb_state *mrb, mrb_value self)
 {
   mrb_int n,len,times;
-  struct RString *str2;
+  struct MRString *str2;
   char *p;
 
   mrb_get_args(mrb, "i", &times);
@@ -498,8 +498,8 @@ mrb_str_cmp(mrb_state *mrb, mrb_value str1, mrb_value str2)
 {
   mrb_int len;
   mrb_int retval;
-  struct RString *s1 = mrb_str_ptr(str1);
-  struct RString *s2 = mrb_str_ptr(str2);
+  struct MRString *s1 = mrb_str_ptr(str1);
+  struct MRString *s2 = mrb_str_ptr(str2);
 
   len = lesser(RSTR_LEN(s1), RSTR_LEN(s2));
   retval = memcmp(RSTR_PTR(s1), RSTR_PTR(s2), len);
@@ -725,8 +725,8 @@ mrb_str_index(mrb_state *mrb, mrb_value str, mrb_value sub, mrb_int offset)
 MRB_API mrb_value
 mrb_str_dup(mrb_state *mrb, mrb_value str)
 {
-  struct RString *s = mrb_str_ptr(str);
-  struct RString *dup = str_new(mrb, 0, 0);
+  struct MRString *s = mrb_str_ptr(str);
+  struct MRString *dup = str_new(mrb, 0, 0);
 
   str_with_class(mrb, dup, str);
   return str_replace(mrb, dup, s);
@@ -846,7 +846,7 @@ mrb_str_capitalize_bang(mrb_state *mrb, mrb_value str)
 {
   char *p, *pend;
   mrb_bool modify = FALSE;
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
 
   mrb_str_modify(mrb, s);
   if (RSTR_LEN(s) == 0 || !RSTR_PTR(s)) return mrb_nil_value();
@@ -903,7 +903,7 @@ mrb_str_chomp_bang(mrb_state *mrb, mrb_value str)
   char *p, *pp;
   mrb_int rslen;
   mrb_int len;
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
 
   mrb_str_modify(mrb, s);
   len = RSTR_LEN(s);
@@ -1002,7 +1002,7 @@ mrb_str_chomp(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_str_chop_bang(mrb_state *mrb, mrb_value str)
 {
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
 
   mrb_str_modify(mrb, s);
   if (RSTR_LEN(s) > 0) {
@@ -1060,7 +1060,7 @@ mrb_str_downcase_bang(mrb_state *mrb, mrb_value str)
 {
   char *p, *pend;
   mrb_bool modify = FALSE;
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
 
   mrb_str_modify(mrb, s);
   p = RSTR_PTR(s);
@@ -1111,7 +1111,7 @@ mrb_str_downcase(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_str_empty_p(mrb_state *mrb, mrb_value self)
 {
-  struct RString *s = mrb_str_ptr(self);
+  struct MRString *s = mrb_str_ptr(self);
 
   return mrb_bool_value(RSTR_LEN(s) == 0);
 }
@@ -1138,7 +1138,7 @@ mrb_str_eql(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_str_subseq(mrb_state *mrb, mrb_value str, mrb_int beg, mrb_int len)
 {
-  struct RString *orig, *s;
+  struct MRString *orig, *s;
   mrb_shared_string *shared;
 
   orig = mrb_str_ptr(str);
@@ -1182,7 +1182,7 @@ mrb_int
 mrb_str_hash(mrb_state *mrb, mrb_value str)
 {
   /* 1-8-7 */
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
   mrb_int len = RSTR_LEN(s);
   char *p = RSTR_PTR(s);
   mrb_int key = 0;
@@ -1325,7 +1325,7 @@ mrb_str_index_m(mrb_state *mrb, mrb_value str)
 #define STR_REPLACE_SHARED_MIN 10
 
 static mrb_value
-str_replace(mrb_state *mrb, struct RString *s1, struct RString *s2)
+str_replace(mrb_state *mrb, struct MRString *s1, struct MRString *s2)
 {
   long len;
 
@@ -1444,7 +1444,7 @@ mrb_obj_as_string(mrb_state *mrb, mrb_value obj)
 MRB_API mrb_value
 mrb_ptr_to_str(mrb_state *mrb, void *p)
 {
-  struct RString *p_str;
+  struct MRString *p_str;
   char *p1;
   char *p2;
   uintptr_t n = (uintptr_t)p;
@@ -1496,7 +1496,7 @@ mrb_check_string_type(mrb_state *mrb, mrb_value str)
 static mrb_value
 mrb_str_reverse(mrb_state *mrb, mrb_value str)
 {
-  struct RString *s2;
+  struct MRString *s2;
   char *s, *e, *p;
 
   if (RSTRING_LEN(str) <= 1) return mrb_str_dup(mrb, str);
@@ -1522,7 +1522,7 @@ mrb_str_reverse(mrb_state *mrb, mrb_value str)
 static mrb_value
 mrb_str_reverse_bang(mrb_state *mrb, mrb_value str)
 {
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
   char *p, *e;
   char c;
 
@@ -1561,7 +1561,7 @@ static mrb_int
 mrb_str_rindex(mrb_state *mrb, mrb_value str, mrb_value sub, mrb_int pos)
 {
   char *s, *sbeg, *t;
-  struct RString *ps = mrb_str_ptr(str);
+  struct MRString *ps = mrb_str_ptr(str);
   mrb_int len = RSTRING_LEN(sub);
 
   /* substring longer than string */
@@ -1984,7 +1984,7 @@ bad:
 MRB_API const char*
 mrb_string_value_cstr(mrb_state *mrb, mrb_value *ptr)
 {
-  struct RString *ps = mrb_str_ptr(*ptr);
+  struct MRString *ps = mrb_str_ptr(*ptr);
   mrb_int len = mrb_str_strlen(mrb, ps);
   char *p = RSTR_PTR(ps);
 
@@ -2011,7 +2011,7 @@ mrb_str_to_inum(mrb_state *mrb, mrb_value str, mrb_int base, mrb_bool badcheck)
   if (s) {
     len = RSTRING_LEN(str);
     if (s[len]) {    /* no sentinel somehow */
-      struct RString *temp_str = str_new(mrb, s, len);
+      struct MRString *temp_str = str_new(mrb, s, len);
       s = RSTR_PTR(temp_str);
     }
   }
@@ -2128,7 +2128,7 @@ mrb_str_to_dbl(mrb_state *mrb, mrb_value str, mrb_bool badcheck)
       mrb_raise(mrb, E_ARGUMENT_ERROR, "string for Float contains null byte");
     }
     if (s[len]) {    /* no sentinel somehow */
-      struct RString *temp_str = str_new(mrb, s, len);
+      struct MRString *temp_str = str_new(mrb, s, len);
       s = RSTR_PTR(temp_str);
     }
   }
@@ -2183,7 +2183,7 @@ mrb_str_to_s(mrb_state *mrb, mrb_value self)
 static mrb_value
 mrb_str_upcase_bang(mrb_state *mrb, mrb_value str)
 {
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
   char *p, *pend;
   mrb_bool modify = FALSE;
 
@@ -2238,7 +2238,7 @@ mrb_str_dump(mrb_state *mrb, mrb_value str)
   mrb_int len;
   const char *p, *pend;
   char *q;
-  struct RString *result;
+  struct MRString *result;
 
   len = 2;                  /* "" */
   p = RSTRING_PTR(str); pend = p + RSTRING_LEN(str);
@@ -2448,7 +2448,7 @@ mrb_str_inspect(mrb_state *mrb, mrb_value str)
 static mrb_value
 mrb_str_bytes(mrb_state *mrb, mrb_value str)
 {
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
   mrb_value a = mrb_ary_new_capa(mrb, RSTR_LEN(s));
   unsigned char *p = (unsigned char *)(RSTR_PTR(s)), *pend = p + RSTR_LEN(s);
 

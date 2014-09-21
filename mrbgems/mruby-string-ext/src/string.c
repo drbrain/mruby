@@ -32,7 +32,7 @@ mrb_str_swapcase_bang(mrb_state *mrb, mrb_value str)
 {
   char *p, *pend;
   int modify = 0;
-  struct RString *s = mrb_str_ptr(str);
+  struct MRString *s = mrb_str_ptr(str);
 
   mrb_str_modify(mrb, s);
   p = RSTRING_PTR(str);
@@ -254,7 +254,7 @@ mrb_str_succ_bang(mrb_state *mrb, mrb_value self)
   mrb_value result;
   unsigned char *p, *e, *b, *t;
   char *prepend;
-  struct RString *s = mrb_str_ptr(self);
+  struct MRString *s = mrb_str_ptr(self);
   size_t l;
 
   if (RSTRING_LEN(self) == 0)

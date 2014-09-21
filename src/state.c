@@ -173,12 +173,12 @@ mrb_irep_free(mrb_state *mrb, mrb_irep *irep)
 mrb_value
 mrb_str_pool(mrb_state *mrb, mrb_value str)
 {
-  struct RString *s = mrb_str_ptr(str);
-  struct RString *ns;
+  struct MRString *s = mrb_str_ptr(str);
+  struct MRString *ns;
   char *ptr;
   mrb_int len;
 
-  ns = (struct RString *)mrb_malloc(mrb, sizeof(struct RString));
+  ns = (struct MRString *)mrb_malloc(mrb, sizeof(struct MRString));
   ns->tt = MRB_TT_STRING;
   ns->c = mrb->string_class;
 

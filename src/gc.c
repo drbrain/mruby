@@ -103,7 +103,7 @@ typedef struct {
     struct MRBasic basic;
     struct MRObject object;
     struct RClass klass;
-    struct RString string;
+    struct MRString string;
     struct RArray array;
     struct RHash hash;
     struct RRange range;
@@ -658,7 +658,7 @@ obj_free(mrb_state *mrb, struct MRBasic *obj)
     break;
 
   case MRB_TT_STRING:
-    mrb_gc_free_str(mrb, (struct RString*)obj);
+    mrb_gc_free_str(mrb, (struct MRString*)obj);
     break;
 
   case MRB_TT_PROC:

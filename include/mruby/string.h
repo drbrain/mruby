@@ -15,7 +15,7 @@ extern const char mrb_digitmap[];
 
 #define RSTRING_EMBED_LEN_MAX ((mrb_int)(sizeof(void*) * 3 - 1))
 
-struct RString {
+struct MRString {
   MRB_OBJECT_HEADER;
   union {
     struct {
@@ -59,14 +59,14 @@ struct RString {
 #define RSTR_SET_NOFREE_FLAG(s) ((s)->flags |= MRB_STR_NOFREE)
 #define RSTR_UNSET_NOFREE_FLAG(s) ((s)->flags &= ~MRB_STR_NOFREE)
 
-#define mrb_str_ptr(s)       ((struct RString*)(mrb_ptr(s)))
+#define mrb_str_ptr(s)       ((struct MRString*)(mrb_ptr(s)))
 #define RSTRING(s)           mrb_str_ptr(s)
 #define RSTRING_PTR(s)       RSTR_PTR(RSTRING(s))
 #define RSTRING_EMBED_LEN(s) RSTR_ENBED_LEN(RSTRING(s))
 #define RSTRING_LEN(s)       RSTR_LEN(RSTRING(s))  
 #define RSTRING_CAPA(s)      RSTR_CAPA(RSTRING(s))
 #define RSTRING_END(s)       (RSTRING_PTR(s) + RSTRING_LEN(s))
-mrb_int mrb_str_strlen(mrb_state*, struct RString*);
+mrb_int mrb_str_strlen(mrb_state*, struct MRString*);
 
 #define MRB_STR_SHARED    1
 #define MRB_STR_NOFREE    2
@@ -74,8 +74,8 @@ mrb_int mrb_str_strlen(mrb_state*, struct RString*);
 #define MRB_STR_EMBED_LEN_MASK 0xf8
 #define MRB_STR_EMBED_LEN_SHIFT 3
 
-void mrb_gc_free_str(mrb_state*, struct RString*);
-MRB_API void mrb_str_modify(mrb_state*, struct RString*);
+void mrb_gc_free_str(mrb_state*, struct MRString*);
+MRB_API void mrb_str_modify(mrb_state*, struct MRString*);
 MRB_API void mrb_str_concat(mrb_state*, mrb_value, mrb_value);
 MRB_API mrb_value mrb_str_plus(mrb_state*, mrb_value, mrb_value);
 MRB_API mrb_value mrb_ptr_to_str(mrb_state *, void*);
